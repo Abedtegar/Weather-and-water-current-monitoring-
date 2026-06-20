@@ -15,8 +15,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
     exit;
 }
 
-define('AUTH_USER', getenv('WBB_AUTH_USER') ?: 'YOUR_HTTP_USER');
-define('AUTH_PASS', getenv('WBB_AUTH_PASS') ?: 'YOUR_HTTP_PASSWORD');
+const AUTH_USER = 'pcserver';
+const AUTH_PASS = 'dteo2025';
 
 /** @return array{0:?string,1:?string} */
 function getBasicAuthCredentials(): array {

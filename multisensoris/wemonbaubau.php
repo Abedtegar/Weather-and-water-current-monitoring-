@@ -42,17 +42,17 @@ if ($method !== 'GET' && $method !== 'POST') {
     exit;
 }
 
-define('AUTH_USER', getenv('WBB_AUTH_USER') ?: 'YOUR_HTTP_USER');
-define('AUTH_PASS', getenv('WBB_AUTH_PASS') ?: 'YOUR_HTTP_PASSWORD');
+const AUTH_USER = 'pcserver';
+const AUTH_PASS = 'dteo2025';
 
 // Installation constants (cm). Moved from firmware to server.
 const SENSOR_TO_BOTTOM_CM = 1100;
 const SENSOR_TO_CALM_WATER_CM = 400;
 
-define('DB_HOST', getenv('WBB_DB_HOST') ?: 'localhost');
-define('DB_USER', getenv('WBB_DB_USER') ?: 'YOUR_DB_USER');
-define('DB_PASS', getenv('WBB_DB_PASS') ?: 'YOUR_DB_PASSWORD');
-define('DB_NAME', getenv('WBB_DB_NAME') ?: 'Wemon_BauBau');
+const DB_HOST = 'localhost';
+const DB_USER = 'Joko';
+const DB_PASS = 'Joko12345';
+const DB_NAME = 'Wemon_BauBau';
 
 // Compatibility for older PHP runtimes.
 if (!function_exists('hash_equals')) {

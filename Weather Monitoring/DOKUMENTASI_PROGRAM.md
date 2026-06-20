@@ -9,6 +9,11 @@ Program ini menjalankan monitoring 3 sumber data utama pada ESP32-S3:
 
 Setiap data dibaca periodik, dicetak ke Serial untuk debugging, lalu dikirim ke server melalui HTTP (mode utama saat ini: HTTP POST JSON untuk batch Lidar).
 
+Catatan:
+1. Sumber suhu dan kelembaban yang dikirim ke server dikontrol oleh `kUseThm30mdForTempHumidity` di `include/Sensor.h`.
+2. Jika flag tersebut `true`, suhu/humidity diambil dari THM30MD dan sensor itu diinisialisasi saat setup.
+3. Jika flag tersebut `false`, THM30MD tidak diinisialisasi dan suhu/humidity diambil dari anemometer.
+
 ## 2. File Inti yang Dipakai
 Berdasarkan konfigurasi build, file yang dikompilasi adalah:
 
@@ -56,7 +61,7 @@ Urutan setup di main.cpp:
 2. pinMode(led_indicator, OUTPUT) + LED default LOW
 3. Print banner: Weather Monitoring Simple Mode
 4. anemometerInit(2400)
-5. thm30mdInit(9600)
+5. thm30mdInit(9600) hanya jika `kUseThm30mdForTempHumidity = true`
 6. lidarInitSimple()
 7. (opsional) serverInit() untuk koneksi WiFi awal (dikontrol oleh `kEnableServerUpload` di main.cpp)
 
@@ -90,8 +95,15 @@ Pemetaan key yang dipakai firmware:
 3. `D` -> kecepatan angin maksimum (skala /10)
 4. `E` -> curah hujan 1 jam (skala /10)
 5. `F` -> curah hujan 24 jam (skala /10)
-6. `M` -> kelembaban dari unit anemometer (skala /10, dibulatkan ke int)
-7. `N` -> tekanan udara (skala /10)
+6. `L` -> temperatur anemometer (skala /10)
+7. `M` -> kelembaban dari unit anemometer (skala /10, dibulatkan ke int)
+8. `N` -> tekanan udara (skala /10)
+
+Tambahan dukungan format dokumentasi alat:
+1. Jika frame yang diterima memakai format `c000s000g000t086r000p000h53b10020`, parser juga dapat membaca:
+2. `t` -> temperatur Fahrenheit, dikonversi ke Celsius
+3. `h` -> humidity, dengan rumus `100 - nilai_mentah`
+4. `b` -> tekanan atmosfer (skala /10 hPa)
 
 Proses validasi:
 
@@ -109,6 +121,7 @@ Rumus konversi:
 5. rainfall24hMm = F / 10.0
 6. humidityAnemometerPct = round((M/10.0)) jika key `M` ada
 7. pressureHpa = N / 10.0 jika key `N` ada
+8. Jika memakai format dokumentasi alat, `t` dikonversi dari Fahrenheit ke Celsius dan `h` menjadi humidity persen
 
 Contoh kalkulasi:
 
@@ -254,7 +267,7 @@ Catatan penting:
 ### 7.3 Endpoint dan Auth
 1. Server: 31.97.66.191
 2. Path: /Wemon_BauBau/wemonbaubau.php
-3. HTTP Basic Auth: <user> / <pass>
+3. HTTP Basic Auth: pcserver / dteo2025
 
 Catatan backend:
 1. Endpoint PHP menyimpan data ke MySQL.
@@ -287,6 +300,10 @@ Fallback saat data invalid:
 1. Anemometer invalid -> wind/rain = 0, pressure = 1013.25
 2. THM30MD invalid -> suhu = 99, humidity = 99
 3. Lidar invalid -> distance/waterheight/waveheight = -1
+
+Catatan source selector:
+1. Saat `kUseThm30mdForTempHumidity = true`, suhu/humidity selalu diambil dari THM30MD.
+2. Saat `kUseThm30mdForTempHumidity = false`, suhu/humidity diambil dari anemometer dan THM30MD tidak diinisialisasi.
 
 Catatan Lidar:
 1. Untuk mode batch, jika sampel Lidar invalid maka elemen array `lidar_distance_cm` akan bernilai -1.
@@ -327,7 +344,7 @@ frameValid: yes
 bytesRxLastSec: 62
 framesTotal: 1
 parseOk: 1 | parseFail: 0
-lastGoodFrame: A...B0274C0026D0044E0000F0013M0790N10096
+lastGoodFrame: A...B0274C0026D0044E0000F0013L0296M0790N10096
 lastByte: 0x0A
 lastByteAgeMs: 15
 windDir(deg): 274
@@ -335,6 +352,7 @@ windAvg(m/s): 2.60
 windMax(m/s): 4.40
 rain1h(mm): 0.00
 rain24h(mm): 1.30
+temperature(C): 29.60
 humidityAnemometer(%): 79
 pressure(hPa): 1009.6
 ```

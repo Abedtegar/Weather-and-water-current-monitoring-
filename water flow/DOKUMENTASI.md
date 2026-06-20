@@ -110,12 +110,12 @@ Fungsi:         Index pulse counter (1x per putaran)
 
 | Param | Value |
 |-------|-------|
-| SSID | YOUR_WIFI_SSID |
-| Password | YOUR_WIFI_PASSWORD |
+| SSID | DTEO-VOKASI |
+| Password | TEO123456 |
 | Server IP | 31.97.66.191 |
 | Endpoint | /Wemon_BauBau/wemonbaubau.php |
-| Username | YOUR_HTTP_USER |
-| Password | YOUR_HTTP_PASSWORD |
+| Username | pcserver |
+| Password | dteo2025 |
 
 Catatan backend:
 - URL tersebut mengarah ke file: /var/www/html/Wemon_BauBau/wemonbaubau.php
@@ -345,7 +345,7 @@ OK
             │   http://31.97.66.191/Wemon_BauBau/wemonbaubau.php?enc_rpm=60.00
             │
             ├─ HTTPClient begin URL
-            ├─ setAuthorization("YOUR_HTTP_USER", "YOUR_HTTP_PASSWORD")
+            ├─ setAuthorization("pcserver", "dteo2025")
             ├─ timeout(5000 ms)
             ├─ GET() → httpResponseCode = 200
             ├─ getString() → response body
@@ -619,8 +619,8 @@ http://31.97.66.191/Wemon_BauBau/wemonbaubau.php?enc_rpm=60.00
 **Solusi:**
 1. Cek SSID & password di server.cpp:
    ```cpp
-   const char *kSsid = "YOUR_WIFI_SSID";      // Verifikasi
-   const char *kPass = "YOUR_WIFI_PASSWORD";  // Verifikasi
+   const char *kSsid = "4G-CPE_2198";      // Verifikasi
+   const char *kPass = "1234567890";       // Verifikasi
    ```
 2. Pastikan router broadcast SSID
 3. Ubah WiFi ke 2.4 GHz band
@@ -637,13 +637,13 @@ http://31.97.66.191/Wemon_BauBau/wemonbaubau.php?enc_rpm=60.00
 **Solusi:**
 1. Test endpoint dengan curl atau Postman:
    ```bash
-   curl -u <user>:<pass> \
+   curl -u pcserver:dteo2025 \
      "http://31.97.66.191/Wemon_BauBau/wemonbaubau.php?enc_rpm=12.34"
    ```
 2. Verifikasi basic auth di server.cpp:
    ```cpp
-   const char *kHttpUser = "YOUR_HTTP_USER";
-   const char *kHttpPass = "YOUR_HTTP_PASSWORD";
+   const char *kHttpUser = "pcserver";
+   const char *kHttpPass = "dteo2025";
    ```
 3. Cek status server dengan `ping 31.97.66.191`
 

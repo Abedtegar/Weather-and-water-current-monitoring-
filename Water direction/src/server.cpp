@@ -5,13 +5,14 @@
 
 namespace {
 
-// NOTE: Do not commit real credentials to git.
-const char *kSsid = "YOUR_WIFI_SSID";
-const char *kPass = "YOUR_WIFI_PASSWORD";
+const char *kSsid = "Wemon Bau Bau";
+const char *kPass = "WemonBauBau2026";
+// const char *kSsid = "DTEO-VOKASI";
+// const char *kPass = "TEO123456";
 const char *kServer = "31.97.66.191";
 const char *kPath = "/Wemon_BauBau/wemonbaubau.php";
-const char *kHttpUser = "YOUR_HTTP_USER";
-const char *kHttpPass = "YOUR_HTTP_PASSWORD";
+const char *kHttpUser = "pcserver";
+const char *kHttpPass = "dteo2025";
 
 uint32_t gLastUploadTime = 0;
 const uint32_t kUploadIntervalMs = 1000;

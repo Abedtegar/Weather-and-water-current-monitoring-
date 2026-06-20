@@ -37,8 +37,9 @@ Mapping & scaling acuan:
 3. `D` -> windSpeedMaxMs = D / 10.0
 4. `E` -> rainfall1hMm = E / 10.0
 5. `F` -> rainfall24hMm = F / 10.0
-6. `M` -> humidityAnemometerPct ≈ round((M/10.0)) (opsional)
-7. `N` -> pressureHpa = N / 10.0 (opsional)
+6. `L` -> temperatureC = L / 10.0
+7. `M` -> humidityAnemometerPct ≈ round((M/10.0)) (opsional)
+8. `N` -> pressureHpa = N / 10.0 (opsional)
 
 ## 4.2 THM30MD
 1. temperatureC = int16(rawTemp) / 10.0
@@ -57,12 +58,14 @@ Mapping & scaling acuan:
 | ANM-03 | `C = 0026` | Amati windAvg pada debug | windAvg = 2.6 m/s |
 | ANM-04 | `D = 0044` | Amati windMax pada debug | windMax = 4.4 m/s |
 | ANM-05 | `F = 0013` | Amati rain24h pada debug | rain24h = 1.3 mm |
-| ANM-06 | `N = 10096` | Amati pressure pada debug | pressure = 1009.6 hPa |
+| ANM-06 | `L = 0296` | Amati temperature pada debug | temperature = 29.6 C |
+| ANM-07 | `N = 10096` | Amati pressure pada debug | pressure = 1009.6 hPa |
 
 Contoh verifikasi hitung:
 1. `C=26` -> 26 / 10.0 = 2.6
 2. `F=13` -> 13 / 10.0 = 1.3
-3. `N=10096` -> 10096 / 10.0 = 1009.6
+3. `L=296` -> 296 / 10.0 = 29.6 C
+4. `N=10096` -> 10096 / 10.0 = 1009.6
 
 ## 6. Test Case THM30MD Modbus RTU
 | ID | Input Mentah | Langkah Uji | Expected Hasil |

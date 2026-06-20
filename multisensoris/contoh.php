@@ -1,9 +1,9 @@
 <?php
 // Konfigurasi Database
-$servername = getenv('WBB_DB_HOST') ?: 'localhost';
-$username = getenv('WBB_DB_USER') ?: 'YOUR_DB_USER';
-$password = getenv('WBB_DB_PASS') ?: 'YOUR_DB_PASSWORD';
-$dbname = getenv('WBB_DB_NAME') ?: 'YOUR_DB_NAME';
+$servername = "localhost";
+$username = "Joko";                    
+$password = "Joko12345";                        
+$dbname = "dbpvwemonbaru";            
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {

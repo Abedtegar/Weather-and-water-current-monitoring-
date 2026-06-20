@@ -196,12 +196,12 @@ constexpr bool kEnableSerialDebug = true;       // true = print debug serial
 
 **`src/server.cpp`** - Kredensial dan endpoint server:
 ```cpp
-const char *kSsid = "YOUR_WIFI_SSID";
-const char *kPass = "YOUR_WIFI_PASSWORD";
+const char *kSsid = "DTEO-VOKASI";
+const char *kPass = "TEO123456";
 const char *kServer = "31.97.66.191";
 const char *kPath = "/Wemon_BauBau/wemonbaubau.php";
-const char *kHttpUser = "YOUR_HTTP_USER";
-const char *kHttpPass = "YOUR_HTTP_PASSWORD";
+const char *kHttpUser = "pcserver";
+const char *kHttpPass = "dteo2025";
 ```
 
 ### Build & Upload

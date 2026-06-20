@@ -5,7 +5,7 @@ declare(strict_types=1);
 // Compatible with ESP32 firmware in Weather Monitoring/src/server.cpp:
 // - Method: GET
 // - Path: /multisensoris/kirimdata3.php
-// - Basic Auth: <user> / <pass>
+// - Basic Auth: pcserver / dteo2025
 // - Query params: windir, windavg, windmax, rain1h, rain24h, suhu, humidity, pressure, distance, waterheight, waveheight
 
 header('Content-Type: text/plain; charset=utf-8');
@@ -16,8 +16,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
     exit;
 }
 
-define('AUTH_USER', getenv('WBB_AUTH_USER') ?: 'YOUR_HTTP_USER');
-define('AUTH_PASS', getenv('WBB_AUTH_PASS') ?: 'YOUR_HTTP_PASSWORD');
+const AUTH_USER = 'pcserver';
+const AUTH_PASS = 'dteo2025';
 
 /** @return array{0:?string,1:?string} */
 function getBasicAuthCredentials(): array {

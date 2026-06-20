@@ -60,6 +60,49 @@ bool getValueAfterKey(const char *data, size_t len, char key, float &out) {
   return false;
 }
 
+bool parseDocumentedFrameAN(const char *data, size_t len,
+                            AnemometerReading &reading) {
+  float windDirRaw = 0.0f;
+  float windSpeed1MinRaw = 0.0f;
+  float windSpeed5MinRaw = 0.0f;
+  float tempFRaw = 0.0f;
+  float rain1hRaw = 0.0f;
+  float rain24hRaw = 0.0f;
+  float humidityRaw = 0.0f;
+  float pressureRaw = 0.0f;
+
+  const bool hasC = getValueAfterKey(data, len, 'c', windDirRaw);
+  const bool hasS = getValueAfterKey(data, len, 's', windSpeed1MinRaw);
+  const bool hasG = getValueAfterKey(data, len, 'g', windSpeed5MinRaw);
+  const bool hasT = getValueAfterKey(data, len, 't', tempFRaw);
+  const bool hasR = getValueAfterKey(data, len, 'r', rain1hRaw);
+  const bool hasP = getValueAfterKey(data, len, 'p', rain24hRaw);
+  const bool hasH = getValueAfterKey(data, len, 'h', humidityRaw);
+  const bool hasB = getValueAfterKey(data, len, 'b', pressureRaw);
+
+  if (!hasC || !hasS || !hasG || !hasT || !hasR || !hasP || !hasH ||
+      !hasB) {
+    return false;
+  }
+
+  reading.windDirectionDeg = static_cast<int>(windDirRaw + 0.5f);
+  reading.windSpeedAvgMs = windSpeed1MinRaw * 0.44704f;
+  reading.windSpeedMaxMs = windSpeed5MinRaw * 0.44704f;
+  reading.rainfall1hMm = rain1hRaw * 0.254f;
+  reading.rainfall24hMm = rain24hRaw * 0.254f;
+  reading.pressureHpa = pressureRaw / 10.0f;
+
+  reading.temperatureC = ((tempFRaw - 32.0f) * 5.0f) / 9.0f;
+  reading.temperatureValid = true;
+
+  reading.humidityPct = 100.0f - humidityRaw;
+  reading.humidityValid = true;
+  reading.humidityAnemometerPct = static_cast<int>(reading.humidityPct + 0.5f);
+
+  reading.anemometerValid = true;
+  return true;
+}
+
 bool parseFrameAN(const char *data, size_t len, AnemometerReading &reading) {
   if (len < 10 || data[0] != 'A') {
     return false;
@@ -70,6 +113,9 @@ bool parseFrameAN(const char *data, size_t len, AnemometerReading &reading) {
   float windMaxRaw = 0.0f;
   float rain1hRaw = 0.0f;
   float rain24hRaw = 0.0f;
+  float temperatureRaw = 0.0f;
+  float humidityRaw = 0.0f;
+  float pressureRaw = 0.0f;
 
   // Required fields based on the proven sketch.
   const bool hasB = getValueAfterKey(data, len, 'B', windDirRaw);
@@ -91,14 +137,21 @@ bool parseFrameAN(const char *data, size_t len, AnemometerReading &reading) {
   reading.windSpeedMaxMs = windMaxRaw / 10.0f;
   reading.rainfall1hMm = rain1hRaw / 10.0f;
   reading.rainfall24hMm = rain24hRaw / 10.0f;
+  reading.temperatureValid = false;
+  reading.humidityValid = false;
 
-  float humidityRaw = 0.0f;
+  if (getValueAfterKey(data, len, 'L', temperatureRaw)) {
+    reading.temperatureC = temperatureRaw / 10.0f;
+    reading.temperatureValid = true;
+  }
+
   if (getValueAfterKey(data, len, 'M', humidityRaw)) {
     const float humidityPct = humidityRaw / 10.0f;
+    reading.humidityPct = humidityPct;
+    reading.humidityValid = true;
     reading.humidityAnemometerPct = static_cast<int>(humidityPct + 0.5f);
   }
 
-  float pressureRaw = 0.0f;
   if (getValueAfterKey(data, len, 'N', pressureRaw)) {
     reading.pressureHpa = pressureRaw / 10.0f;
   }
@@ -157,7 +210,8 @@ bool anemometerRead(AnemometerReading &reading) {
     if (c == '\n' || c == '\r' || c == '*') {
       if (gFrameLen > 20 && gFrame[0] == 'A') {
         ++gFramesTotal;
-        if (parseFrameAN(gFrame, gFrameLen, reading)) {
+        if (parseFrameAN(gFrame, gFrameLen, reading) ||
+            parseDocumentedFrameAN(gFrame, gFrameLen, reading)) {
           ++gParseOk;
           hasNewData = true;
           gLastGoodLen =
@@ -248,5 +302,14 @@ void printAnemometerDebug(const AnemometerReading &reading) {
     Serial.println(reading.humidityAnemometerPct);
     Serial.print("pressure(hPa): ");
     Serial.println(reading.pressureHpa, 1);
+  }
+
+  if (reading.temperatureValid) {
+    Serial.print("temperature(C): ");
+    Serial.println(reading.temperatureC, 2);
+  }
+  if (reading.humidityValid) {
+    Serial.print("humidity(%) : ");
+    Serial.println(reading.humidityPct, 2);
   }
 }

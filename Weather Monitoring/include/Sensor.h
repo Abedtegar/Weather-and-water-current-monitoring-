@@ -19,6 +19,14 @@
 #define Temp_TX 18
 #define Temp_RX 17
 
+constexpr uint32_t kLidarSampleIntervalMs = 100;
+constexpr uint32_t kLidarSamplesPerBatch = 10;
+constexpr uint32_t kUploadIntervalMs = kLidarSampleIntervalMs * kLidarSamplesPerBatch;
+
+// Select source for temperature and humidity sent to the server.
+// false = use Anemometer, true = use THM30MD.
+constexpr bool kUseThm30mdForTempHumidity = false;
+
 struct AnemometerReading {
   bool anemometerValid;
   int windDirectionDeg;
@@ -28,6 +36,10 @@ struct AnemometerReading {
   float rainfall24hMm;
   int humidityAnemometerPct;
   float pressureHpa;
+  bool temperatureValid;
+  float temperatureC;
+  bool humidityValid;
+  float humidityPct;
 };
 
 struct THM30MDReading {

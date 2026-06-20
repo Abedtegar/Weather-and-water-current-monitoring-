@@ -5,23 +5,49 @@
 
 namespace {
 
-// NOTE: Do not commit real credentials to git.
-const char *kSsid = "YOUR_WIFI_SSID";
-const char *kPass = "YOUR_WIFI_PASSWORD";
+const char *kSsid = "Wemon Bau Bau";
+const char *kPass = "WemonBauBau2026";
+// const char *kSsid = "DTEO-VOKASI";
+// const char *kPass = "TEO123456";
 const char *kServer = "31.97.66.191";
 const char *kPath = "/Wemon_BauBau/wemonbaubau.php";
-const char *kHttpUser = "YOUR_HTTP_USER";
-const char *kHttpPass = "YOUR_HTTP_PASSWORD";
+const char *kHttpUser = "pcserver";
+const char *kHttpPass = "dteo2025";
 
 uint32_t gLastUploadTime = 0;
-const uint32_t kUploadIntervalMs = 1000;
 int gFailedUploadCount = 0;
-
+  
 String toFixedOrDefault(bool valid, float value, float fallback, int decimals) {
   if (!valid) {
     return String(fallback, decimals);
   }
   return String(value, decimals);
+}
+
+float selectedTemperature(const AnemometerReading &anemometer,
+                          const THM30MDReading &thm30md) {
+  if (kUseThm30mdForTempHumidity) {
+    return thm30md.valid ? thm30md.temperatureC : 99.0f;
+  }
+
+  return anemometer.temperatureValid ? anemometer.temperatureC : 99.0f;
+}
+
+float selectedHumidity(const AnemometerReading &anemometer,
+                       const THM30MDReading &thm30md) {
+  if (kUseThm30mdForTempHumidity) {
+    return thm30md.valid ? thm30md.humidityPct : 99.0f;
+  }
+
+  if (anemometer.humidityValid) {
+    return anemometer.humidityPct;
+  }
+
+  if (anemometer.anemometerValid) {
+    return static_cast<float>(anemometer.humidityAnemometerPct);
+  }
+
+  return 99.0f;
 }
 
 bool ensureWiFiConnection() {
@@ -88,8 +114,8 @@ bool serverUploadLidarDistanceBatch(const AnemometerReading &anemometer,
     pressure = 1013.25f;
   }
 
-  const float suhu = thm30md.valid ? thm30md.temperatureC : 99.0f;
-  const float humidity = thm30md.valid ? thm30md.humidityPct : 99.0f;
+  const float suhu = selectedTemperature(anemometer, thm30md);
+  const float humidity = selectedHumidity(anemometer, thm30md);
 
   String url = String("http://") + kServer + kPath;
 
@@ -236,8 +262,8 @@ void serverHandleUpload(const AnemometerReading &anemometer,
   if (pressure < 800.0f || pressure > 1100.0f) {
     pressure = 1013.25f;
   }
-  const float suhu = thm30md.valid ? thm30md.temperatureC : 99.0f;
-  const float humidity = thm30md.valid ? thm30md.humidityPct : 99.0f;
+  const float suhu = selectedTemperature(anemometer, thm30md);
+  const float humidity = selectedHumidity(anemometer, thm30md);
   const long distance = lidar.valid ? lidar.distanceCm : -1;
   const long waterHeight = lidar.valid ? lidar.waterHeightCm : -1;
   const long waveHeight = lidar.valid ? lidar.waveHeightCm : -1;

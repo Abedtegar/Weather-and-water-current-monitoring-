@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"name": "Weather Monitoring",
+			"path": "Weather Monitoring"
+		},
+		{
+			"name": "water flow",
+			"path": "water flow"
+		},
+		{
+			"name": "Water direction",
+			"path": "Water direction"
+		},
+		{
+			"path": "multisensoris"
+		}
+	],
+	"settings": {}
+}

@@ -12,12 +12,12 @@ REM
 REM Optional overrides (set before running):
 REM   set WBB_SERVER=31.97.66.191
 REM   set WBB_KPATH=/Wemon_BauBau/wemonbaubau.php
-REM   set WBB_AUTH=YOUR_HTTP_USER:YOUR_HTTP_PASSWORD
+REM   set WBB_AUTH=pcserver:dteo2025
 REM =============================================================
 
 if not defined WBB_SERVER set "WBB_SERVER=31.97.66.191"
 if not defined WBB_KPATH set "WBB_KPATH=/Wemon_BauBau/wemonbaubau.php"
-if not defined WBB_AUTH set "WBB_AUTH=YOUR_HTTP_USER:YOUR_HTTP_PASSWORD"
+if not defined WBB_AUTH set "WBB_AUTH=pcserver:dteo2025"
 if not defined WBB_DEBUG set "WBB_DEBUG=0"
 
 set "TYPE=%~1"

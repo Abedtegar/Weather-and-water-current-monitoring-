@@ -7,9 +7,6 @@ namespace {
 constexpr bool kEnableServerUpload = true;
 constexpr bool kEnableSerialDebug = true;
 
-constexpr uint32_t kLidarSampleIntervalMs = 100;
-constexpr uint32_t kLidarSamplesPerBatch = 10;
-
 // Loop/task-local readings.
 AnemometerReading gAnemometerLocal = {};
 THM30MDReading gThm30mdLocal = {};
@@ -116,9 +113,13 @@ void setup() {
 
   delay(500);
   Serial.println("=== Weather Monitoring Simple Mode ===");
+  Serial.print("Temp/Humidity source: ");
+  Serial.println(kUseThm30mdForTempHumidity ? "THM30MD" : "Anemometer");
 
   anemometerInit(2400);
-  thm30mdInit(9600);
+  if (kUseThm30mdForTempHumidity) {
+    thm30mdInit(9600);
+  }
   lidarInitSimple();
 
   // Start lidar sampling task (100ms). Keep it independent from upload/Modbus.
@@ -142,7 +143,9 @@ void loop() {
 
   // Non-blocking read for serial sensors.
   anemometerRead(gAnemometerLocal);
-  thm30mdRead(gThm30mdLocal);
+  if (kUseThm30mdForTempHumidity) {
+    thm30mdRead(gThm30mdLocal);
+  }
 
   portENTER_CRITICAL(&gWeatherMux);
   gAnemometerShared = gAnemometerLocal;
@@ -159,7 +162,9 @@ void loop() {
     Serial.print("t(ms): ");
     Serial.println(now);
     printAnemometerDebug(gAnemometerLocal);
-    printTHM30MDDebug(gThm30mdLocal);
+    if (kUseThm30mdForTempHumidity) {
+      printTHM30MDDebug(gThm30mdLocal);
+    }
     printLidarDebug(lidarCopy);
     gLastDebugPrintMs = now;
   }
